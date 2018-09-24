@@ -84,10 +84,11 @@ function install_app
 function install_binary
 {
     if [ "$1" != "" ]; then
-        echo installing $1 to /usr/bin
-        $SUDO rm -f /usr/bin/`basename $1`
-        $SUDO cp -f $1 /usr/bin
-        $TAG -a Gray /usr/bin/`basename $1`
+        if [[ ! -e /usr/local/bin ]]; then $SUDO mkdir /usr/local/bin; fi
+        echo installing $1 to /usr/local/bin
+        $SUDO rm -f /usr/bin/`basename $1` /usr/local/bin/`basename $1`
+        $SUDO cp -f $1 /usr/local/bin
+        $TAG -a Gray /usr/local/bin/`basename $1`
     fi
 }
 
