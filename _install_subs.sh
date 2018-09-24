@@ -7,12 +7,12 @@ STANDARD_EXCEPTIONS="Sensors|FakePCIID|BrcmPatchRAM|BrcNonPatchRAM|BrcmBluetooth
 if [[ "$EXCEPTIONS" == "" ]]; then
     EXCEPTIONS="$STANDARD_EXCEPTIONS"
 else
-    EXCEPTIONS="$EXCEPTIONS|$STANDARD_EXCEPTIONS"
+    EXCEPTIONS="$STANDARD_EXCEPTIONS|$EXCEPTIONS"
 fi
 
 # standard essential kexts
 # these kexts are only updated if installed
-ESSENTIAL="$ESSENTIAL FakeSMC.kext RealtekRTL8111.kext IntelMausiEthernet.kext USBInjectAll.kext Lilu.kext WhateverGreen.kext AppleBacklightInjector.kext IntelBacklight.kext VoodooPS2Controller.kext FakePCIID.kext FakePCIID_XHCIMux.kext"
+ESSENTIAL="FakeSMC.kext RealtekRTL8111.kext IntelMausiEthernet.kext USBInjectAll.kext Lilu.kext WhateverGreen.kext AppleBacklightInjector.kext IntelBacklight.kext VoodooPS2Controller.kext FakePCIID.kext FakePCIID_XHCIMux.kext $ESSENTIAL"
 
 SUDO=sudo
 #SUDO='echo #'
@@ -101,6 +101,7 @@ function install
         for kext in $out/Release/*.kext; do
             # install the kext when it exists regardless of filter
             kextname="`basename $kext`"
+
             if [[ -e "$SLE/$kextname" || -e "$KEXTDEST/$kextname" || "$2" == "" || "`echo $kextname | grep -vE "$2"`" != "" ]]; then
                 install_kext $kext
             fi
@@ -204,6 +205,18 @@ function install_brcmpatchram_kexts
     remove_kext BrcmFirmwareData.kext
 }
 
+function install_fakepciid_intel_hdmi_audio
+{
+    install_kext _downloads/kexts/RehabMan-FakePCIID*/Release/FakePCIID.kext
+    install_kext _downloads/kexts/RehabMan-FakePCIID*/Release/FakePCIID_Intel_HDMI_Audio.kext
+}
+
+function install_fakepciid_xhcimux
+{
+    install_kext _downloads/kexts/RehabMan-FakePCIID*/Release/FakePCIID.kext
+    install_kext _downloads/kexts/RehabMan-FakePCIID*/Release/FakePCIID_XHCIMux.kext
+}
+
 function remove_deprecated_kexts
 {
     # now using IntelBacklight.kext instead of ACPIBacklight.kext
@@ -286,8 +299,8 @@ function update_efi_kexts
     EFI=`./mount_efi.sh`
     echo Updating kexts at EFI/Clover/kexts/Other
     for kext in $ESSENTIAL; do
-        echo updating $EFI/EFI/CLOVER/kexts/Other/$kext
         if [[ -e $KEXTDEST/$kext ]]; then
+            echo updating $EFI/EFI/CLOVER/kexts/Other/$kext
             cp -Rfp $KEXTDEST/$kext $EFI/EFI/CLOVER/kexts/Other
         fi
         rm -Rf $EFI/EFI/CLOVER/kexts/Other/IntelGraphicsFixup.kext
