@@ -191,7 +191,6 @@ function install_brcmpatchram_kexts
         # remove BrcPatchRAM.kext/etc just in case
         remove_kext BrcmPatchRAM.kext
         remove_kext BrcmNonPatchRAM.kext
-        remove_kext BrcmBluetoothInjector.kext
     else
         # prior to 10.11, need BrcmPatchRAM.kext
         install_kext _downloads/kexts/RehabMan-BrcmPatchRAM*/Release/BrcmPatchRAM.kext
