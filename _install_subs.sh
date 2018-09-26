@@ -247,6 +247,15 @@ function install_backlight_kexts
     fi
 }
 
+function install_fakesmc_sensor_kexts
+{
+    install_kext _downloads/kexts/RehabMan-FakeSMC*/FakeSMC_ACPISensors.kext
+    install_kext _downloads/kexts/RehabMan-FakeSMC*/FakeSMC_CPUSensors.kext
+    install_kext _downloads/kexts/RehabMan-FakeSMC*/FakeSMC_GPUSensors.kext
+    install_kext _downloads/kexts/RehabMan-FakeSMC*/FakeSMC_LPCSensors.kext
+    install_kext _downloads/kexts/RehabMan-FakeSMC*/FakeSMC_SMMSensors.kext
+}
+
 function remove_hdamods
 {
     if [[ "$HDA" != "" ]]; then
