@@ -314,7 +314,7 @@ function update_efi_kexts
         fi
     done
     # remove deprecated kexts from EFI that were typically ESSENTIAL
-    for kext in IntelGraphicsFixup.kext CoreDisplayFixup.kext FakePCIID_Intel_HD_Graphics.kext ]]; do
+    for kext in IntelGraphicsFixup.kext CoreDisplayFixup.kext FakePCIID_Intel_HD_Graphics.kext FakePCIID_Broadcom_WiFi.kext ]]; do
         if [[ ! -e $KEXTDEST/$kext ]]; then
             rm -Rf $EFI/EFI/CLOVER/kexts/Other/$kext.kext
         fi
