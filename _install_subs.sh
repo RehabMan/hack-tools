@@ -305,16 +305,24 @@ function rebuild_kernel_cache
 function update_efi_kexts
 {
     # install/update kexts on EFI/Clover/kexts/Other
-    EFI=`./mount_efi.sh`
+    EFI=$(./mount_efi.sh)
     echo Updating kexts at EFI/Clover/kexts/Other
     for kext in $ESSENTIAL; do
         if [[ -e $KEXTDEST/$kext ]]; then
             echo updating $EFI/EFI/CLOVER/kexts/Other/$kext
             cp -Rfp $KEXTDEST/$kext $EFI/EFI/CLOVER/kexts/Other
         fi
-        rm -Rf $EFI/EFI/CLOVER/kexts/Other/IntelGraphicsFixup.kext
-        rm -Rf $EFI/EFI/CLOVER/kexts/Other/CoreDisplayFixup.kext
     done
+    # remove deprecated kexts from EFI that were typically ESSENTIAL
+    for kext in IntelGraphicsFixup.kext CoreDisplayFixup.kext FakePCIID_Intel_HD_Graphics.kext ]]; do
+        if [[ ! -e $KEXTDEST/$kext ]]; then
+            rm -Rf $EFI/EFI/CLOVER/kexts/Other/$kext.kext
+        fi
+    done
+    # remove FakePCIID.kext from EFI if it is the only FakePCIID kext remaining
+    if [[ "$(echo $EFI/EFI/CLOVER/kexts/Other/FakePCIID*)" == "$EFI/EFI/CLOVER/kexts/Other/FakePCIID.kext" ]]; then
+        rm -Rf $EFI/EFI/CLOVER/kexts/Other/FakePCIID.kext
+    fi
 }
 
 function remove_voodoops2daemon
