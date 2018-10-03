@@ -1,6 +1,9 @@
 #!/bin/bash
-
 #set -x
+
+SUDO=sudo
+#SUDO='echo #'
+#SUDO=nothing
 
 # certain kexts are exceptions to automatic installation
 STANDARD_EXCEPTIONS="Sensors|FakePCIID|BrcmPatchRAM|BrcNonPatchRAM|BrcmBluetoothInjector|BrcmFirmwareData|IntelBacklight|WhateverName"
@@ -14,11 +17,8 @@ fi
 # these kexts are only updated if installed
 ESSENTIAL="FakeSMC.kext RealtekRTL8111.kext IntelMausiEthernet.kext USBInjectAll.kext Lilu.kext WhateverGreen.kext AppleBacklightInjector.kext IntelBacklight.kext VoodooPS2Controller.kext FakePCIID.kext FakePCIID_XHCIMux.kext $ESSENTIAL"
 
-SUDO=sudo
-#SUDO='echo #'
-#SUDO=nothing
+TAGCMD="$(dirname ${BASH_SOURCE[0]})"/tag
 TAG=tag_file
-TAGCMD=`pwd`/tools/tag
 SLE=/System/Library/Extensions
 LE=/Library/Extensions
 
@@ -270,7 +270,7 @@ function install_hdazml
     if [[ "$HDA" != "" ]]; then
         remove_hdamods
         # alternate configuration (requires .xml.zlib .zml.zlib AppleHDA patch)
-        tools/patch_hdazml.sh "$HDA"
+        "$(dirname ${BASH_SOURCE[0]})"/patch_hdazml.sh "$HDA"
         $SUDO cp AppleHDA_${HDA}_Resources/*.zml* $SLE/AppleHDA.kext/Contents/Resources
         $TAG -a Gray $SLE/AppleHDA.kext
     fi
@@ -282,7 +282,7 @@ function install_hdainject
         remove_hdamods
         # HDA injector configuration
         remove_kext AppleHDA_$HDA.kext
-        tools/patch_hdainject.sh "$HDA"
+        "$(dirname ${BASH_SOURCE[0]})"/patch_hdainject.sh "$HDA"
         install_kext AppleHDA_$HDA.kext
     fi
 }
@@ -305,7 +305,7 @@ function rebuild_kernel_cache
 function update_efi_kexts
 {
     # install/update kexts on EFI/Clover/kexts/Other
-    EFI=$(./mount_efi.sh)
+    EFI=$("$(dirname ${BASH_SOURCE[0]})"/mount_efi.sh)
     echo Updating kexts at EFI/Clover/kexts/Other
     for kext in $ESSENTIAL; do
         if [[ -e $KEXTDEST/$kext ]]; then

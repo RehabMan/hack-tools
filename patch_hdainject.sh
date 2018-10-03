@@ -2,8 +2,7 @@
 #set -x
 
 # include subroutines
-DIR=$(dirname ${BASH_SOURCE[0]})
-source "$DIR/_hda_subs.sh"
+source "$(dirname ${BASH_SOURCE[0]})"/_hda_subs.sh
 
 # Assumes layout plists, Platforms plist in Resources_$1
 

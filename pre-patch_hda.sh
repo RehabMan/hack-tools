@@ -9,6 +9,7 @@ echo "Type your password if requested (to mount EFI partition, and to patch $unp
 # AppleHDA patching function
 function prepatchAppleHDAbinary()
 {
+    local TOOLS=$(dirname ${BASH_SOURCE[0]})
     echo "Patching $unpatched/AppleHDA.kext..."
     efi=`sudo ./mount_efi.sh /`
 
@@ -32,7 +33,7 @@ function prepatchAppleHDAbinary()
                 repl=$([[ "$repl" =~ \<data\>(.*)\<\/data\> ]] && echo ${BASH_REMATCH[1]})
                 find=`echo $find | base64 --decode | xxd -p | tr '\n' ' '`
                 repl=`echo $repl | base64 --decode | xxd -p | tr '\n' ' '`
-                sudo ./tools/binpatch "$find" "$repl" $bin
+                sudo "$TOOLS"/binpatch "$find" "$repl" $bin
             fi
         fi
     done

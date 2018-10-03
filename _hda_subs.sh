@@ -7,9 +7,8 @@ unpatched=/System/Library/Extensions
 #unpatched=~/Desktop
 
 # tools are in the same directory as this script
-DIR=$(dirname ${BASH_SOURCE[0]})
-binpatch="$DIR"/binpatch
-zlib="$DIR"/zlib
+binpatch="$(dirname ${BASH_SOURCE[0]})"/binpatch
+zlib="$(dirname ${BASH_SOURCE[0]})"/zlib
 
 # extract minor version (eg. 10.9 vs. 10.10 vs. 10.11)
 MINOR_VER=$([[ "$(sw_vers -productVersion)" =~ [0-9]+\.([0-9]+) ]] && echo ${BASH_REMATCH[1]})
