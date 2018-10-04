@@ -76,7 +76,7 @@ function install_app
     if [ "$1" != "" ]; then
         echo installing $1 to /Applications
         $SUDO rm -Rf /Applications/`basename $1`
-        $SUDO cp -Rf $1 /Applications
+        cp -Rf $1 /Applications
         $TAG -a Gray /Applications/`basename $1`
     fi
 }
