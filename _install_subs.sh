@@ -305,25 +305,27 @@ function rebuild_kernel_cache
 function update_efi_kexts
 {
     # install/update kexts on EFI/Clover/kexts/Other
-    EFI=$("$(dirname ${BASH_SOURCE[0]})"/mount_efi.sh)
+    local EFI=$("$(dirname ${BASH_SOURCE[0]})"/mount_efi.sh)
     echo Updating kexts at EFI/Clover/kexts/Other
     for kext in $ESSENTIAL; do
         if [[ -e $KEXTDEST/$kext ]]; then
-            echo updating $EFI/EFI/CLOVER/kexts/Other/$kext
-            cp -Rfp $KEXTDEST/$kext $EFI/EFI/CLOVER/kexts/Other
+            echo updating "$EFI"/EFI/CLOVER/kexts/Other/$kext
+            cp -Rfp $KEXTDEST/$kext "$EFI"/EFI/CLOVER/kexts/Other
         fi
     done
     # remove deprecated kexts from EFI that were typically ESSENTIAL
     for kext in IntelGraphicsFixup.kext CoreDisplayFixup.kext FakePCIID_Intel_HD_Graphics.kext FakePCIID_Broadcom_WiFi.kext; do
-        if [[ ! -e $KEXTDEST/$kext ]]; then
-            echo removing $EFI/EFI/CLOVER/kexts/Other/$kext
-            rm -Rf $EFI/EFI/CLOVER/kexts/Other/$kext
+        if [[ ! -e $KEXTDEST/$kext && -e "$EFI"/EFI/CLOVER/kexts/Other/$kext.kext ]]; then
+            echo removing "$EFI"/EFI/CLOVER/kexts/Other/$kext.kext
+            rm -Rf "$EFI"/EFI/CLOVER/kexts/Other/$kext.kext
         fi
     done
     # remove FakePCIID.kext from EFI if it is the only FakePCIID kext remaining
-    if [[ "$(echo $EFI/EFI/CLOVER/kexts/Other/FakePCIID*)" == "$EFI/EFI/CLOVER/kexts/Other/FakePCIID.kext" ]]; then
-        echo removing $EFI/EFI/CLOVER/kexts/Other/FakePCIID.kext
-        rm -Rf $EFI/EFI/CLOVER/kexts/Other/FakePCIID.kext
+    if [[ "$(echo -n "$EFI"/EFI/CLOVER/kexts/Other/FakePCIID*)" == "$(echo -n "$EFI"/EFI/CLOVER/kexts/Other/FakePCIID.kext)" ]]; then
+        if [[ "$EFI"/EFI/CLOVER/kexts/Other/FakePCIID.kext ]]; then
+            echo removing "$EFI"/EFI/CLOVER/kexts/Other/FakePCIID.kext
+            rm -Rf "$EFI"/EFI/CLOVER/kexts/Other/FakePCIID.kext
+        fi
     fi
 }
 
