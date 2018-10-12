@@ -6,7 +6,7 @@ SUDO=sudo
 #SUDO=nothing
 
 # certain kexts are exceptions to automatic installation
-STANDARD_EXCEPTIONS="Sensors|FakePCIID|BrcmPatchRAM|BrcNonPatchRAM|BrcmBluetoothInjector|BrcmFirmwareData|IntelBacklight|WhateverName"
+STANDARD_EXCEPTIONS="Sensors|FakePCIID|BrcmPatchRAM|BrcNonPatchRAM|BrcmBluetoothInjector|BrcmFirmwareData|IntelBacklight|AppleBacklightFixup.kext|WhateverName"
 if [[ "$EXCEPTIONS" == "" ]]; then
     EXCEPTIONS="$STANDARD_EXCEPTIONS"
 else
@@ -15,7 +15,7 @@ fi
 
 # standard essential kexts
 # these kexts are only updated if installed
-ESSENTIAL="FakeSMC.kext RealtekRTL8111.kext IntelMausiEthernet.kext USBInjectAll.kext Lilu.kext WhateverGreen.kext AppleBacklightInjector.kext IntelBacklight.kext VoodooPS2Controller.kext FakePCIID.kext FakePCIID_XHCIMux.kext $ESSENTIAL"
+ESSENTIAL="FakeSMC.kext RealtekRTL8111.kext IntelMausiEthernet.kext USBInjectAll.kext Lilu.kext WhateverGreen.kext AppleBacklightInjector.kext AppleBacklightFixup.kext IntelBacklight.kext VoodooPS2Controller.kext FakePCIID.kext FakePCIID_XHCIMux.kext $ESSENTIAL"
 
 TAGCMD="$(dirname ${BASH_SOURCE[0]})"/tag
 TAG=tag_file
@@ -236,14 +236,21 @@ function remove_deprecated_kexts
 
 function install_backlight_kexts
 {
-    # install AppleBacklightInjector.kext on 10.12
+    # install AppleBacklightFixup.kext or AppleBacklightInjector.kext on 10.12+
     #  (set BKLT=1 in SSDT-HACK.dsl to use it, set BKLT=0 to use IntelBacklight.kext)
     if [[ $MINOR_VER -ge 12 ]]; then
-        install_kext kexts/AppleBacklightInjector.kext
+        if [[ -e $(echo _downloads/kexts/RehabMan-BacklightFixup*/Release/AppleBacklightFixup.kext) ]]; then
+            install_kext _downloads/kexts/RehabMan-BacklightFixup*/Release/AppleBacklightFixup.kext
+            remove_kext AppleBacklightInjector.kext
+        else
+            install_kext kexts/AppleBacklightInjector.kext
+            remove_kext AppleBacklightFixup.kext
+        fi
         remove_kext IntelBacklight.kext
     else
         install_kext _downloads/kexts/RehabMan-IntelBacklight*/Release/IntelBacklight.kext
         remove_kext AppleBacklightInjector.kext
+        remove_kext AppleBacklightFixup.kext
     fi
 }
 
@@ -326,6 +333,11 @@ function update_efi_kexts
             echo removing "$EFI"/EFI/CLOVER/kexts/Other/FakePCIID.kext
             rm -Rf "$EFI"/EFI/CLOVER/kexts/Other/FakePCIID.kext
         fi
+    fi
+    # remove AppleBacklightInjector.kext when using AppleBacklightFixup.kext
+    if [[ -e "$EFI"/EFI/CLOVER/kexts/Other/AppleBacklightFixup.kext ]]; then
+        echo removing "$EFI"/EFI/CLOVER/kexts/Other/AppleBacklightInjector.kext
+        rm -Rf "$EFI"/EFI/CLOVER/kexts/Other/AppleBacklightInjector.kext
     fi
 }
 
