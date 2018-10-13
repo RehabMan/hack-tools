@@ -321,10 +321,12 @@ function update_efi_kexts
         fi
     done
     # remove deprecated kexts from EFI that were typically ESSENTIAL
-    for kext in IntelGraphicsFixup.kext CoreDisplayFixup.kext FakePCIID_Intel_HD_Graphics.kext FakePCIID_Broadcom_WiFi.kext; do
-        if [[ ! -e $KEXTDEST/$kext && -e "$EFI"/EFI/CLOVER/kexts/Other/$kext.kext ]]; then
-            echo removing "$EFI"/EFI/CLOVER/kexts/Other/$kext.kext
-            rm -Rf "$EFI"/EFI/CLOVER/kexts/Other/$kext.kext
+    # or kexts that aren't really deprecated, but if they are not in /L/E, remove from kexts/Other
+    # (eg. the AppleBacklightFixup.kext vs. AppleBacklightInjector.kext case)
+    for kext in IntelGraphicsFixup.kext CoreDisplayFixup.kext FakePCIID_Intel_HD_Graphics.kext FakePCIID_Broadcom_WiFi.kext AppleBacklightFixup.kext AppleBacklightInjector.kext; do
+        if [[ ! -e $KEXTDEST/$kext && -e "$EFI"/EFI/CLOVER/kexts/Other/$kext ]]; then
+            echo removing "$EFI"/EFI/CLOVER/kexts/Other/$kext
+            rm -Rf "$EFI"/EFI/CLOVER/kexts/Other/$kext
         fi
     done
     # remove FakePCIID.kext from EFI if it is the only FakePCIID kext remaining
@@ -333,11 +335,6 @@ function update_efi_kexts
             echo removing "$EFI"/EFI/CLOVER/kexts/Other/FakePCIID.kext
             rm -Rf "$EFI"/EFI/CLOVER/kexts/Other/FakePCIID.kext
         fi
-    fi
-    # remove AppleBacklightInjector.kext when using AppleBacklightFixup.kext
-    if [[ -e "$EFI"/EFI/CLOVER/kexts/Other/AppleBacklightFixup.kext ]]; then
-        echo removing "$EFI"/EFI/CLOVER/kexts/Other/AppleBacklightInjector.kext
-        rm -Rf "$EFI"/EFI/CLOVER/kexts/Other/AppleBacklightInjector.kext
     fi
 }
 
