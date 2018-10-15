@@ -15,7 +15,7 @@ fi
 
 # standard essential kexts
 # these kexts are only updated if installed
-ESSENTIAL="FakeSMC.kext RealtekRTL8111.kext IntelMausiEthernet.kext USBInjectAll.kext Lilu.kext WhateverGreen.kext AppleBacklightInjector.kext AppleBacklightFixup.kext IntelBacklight.kext VoodooPS2Controller.kext FakePCIID.kext FakePCIID_XHCIMux.kext $ESSENTIAL"
+ESSENTIAL="FakeSMC.kext RealtekRTL8111.kext IntelMausiEthernet.kext USBInjectAll.kext Lilu.kext WhateverGreen.kext AppleBacklightInjector.kext AppleBacklightFixup.kext IntelBacklight.kext VoodooPS2Controller.kext FakePCIID.kext FakePCIID_XHCIMux.kext XHCI-unsupported.kext SATA-unsupported.kext $ESSENTIAL"
 
 TAGCMD="$(dirname ${BASH_SOURCE[0]})"/tag
 TAG=tag_file
@@ -232,6 +232,17 @@ function remove_deprecated_kexts
     remove_kext FakePCIID_Intel_HD_Graphics.kext
     # using AirportBrcmFixup.kext instead of FakePCIID_Broadcom_WiFi.kext
     remove_kext FakePCIID_Broadcom_WiFi.kext
+    # remove old SATA injectors
+    remove_kext SATA-RAID-unsupported.kext
+    remove_kext SATA-100-series-unsupported.kext
+    remove_kext SATA-200-series-unsupported.kext
+    remove_kext SATA-300-series-unsupported.kext
+    # remove old XHCI injectors
+    remove_kext XHCI-9-series.kext
+    remove_kext XHCI-x99-injector.kext
+    remove_kext XHCI-100-series-injector.kext
+    remove_kext XHCI-200-series-injector.kext
+    remove_kext XHCI-300-series-injector.kext
 }
 
 function install_backlight_kexts
