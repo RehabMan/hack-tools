@@ -303,6 +303,28 @@ function install_hda
     fi
 }
 
+function _create_and_install_lilufriend
+# $1 optional, template kext to use (default is LiluFriendTemplate.kext)
+# $2 optional, output kext name (default is LiluFriend.kext)
+{
+    local template="$(dirname ${BASH_SOURCE[0]})"/template_kexts/LiluFriendTemplate.kext
+    if [[ "$1" != "" ]]; then template="$1"; fi
+    local output="LiluFriend.kext"
+    if [[ "$2" != "" ]]; then template="$2"; fi
+    "$(dirname ${BASH_SOURCE[0]})"/create_lilufriend.sh "$1" "$2"
+    install_kext "$2"
+}
+
+function create_and_install_lilufriend
+{
+    _create_and_install_lilufriend "$(dirname ${BASH_SOURCE[0]})"/template_kexts/LiluFriendTemplate.kext LiluFriend.kext
+}
+
+function create_and_install_lilufriendlite
+{
+    _create_and_install_lilufriend "$(dirname ${BASH_SOURCE[0]})"/template_kexts/LiluFriendLiteTemplate.kext LiluFriendLite.kext
+}
+
 function rebuild_kernel_cache
 {
     # force cache rebuild with output
