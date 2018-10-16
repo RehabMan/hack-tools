@@ -83,6 +83,18 @@ function add_all_lilu_dependencies
     done
 }
 
+function build_it
+# $1 path to target LiluFriend.kext or LiluFriendLite.kext
+{
+    local minor_ver=$([[ "$(sw_vers -productVersion)" =~ [0-9]+\.([0-9]+) ]] && echo ${BASH_REMATCH[1]})
+    # on 10.11 or later, no need to scan /S/L/E as hack kexts are installed to /L/E only
+    if [[ $minor_ver -lt 11 ]]; then
+        add_all_lilu_dependencies /System/Library/Extensions "$1"
+    fi
+    add_all_lilu_dependencies /Library/Extensions "$1"
+}
+
+# script entry
 # $1 is template to use
 # $2 is output kext name
 
@@ -107,6 +119,4 @@ fi
 echo Making "$2" from "$1"
 rm -Rf "$2"
 cp -R "$1" "$2"
-add_all_lilu_dependencies /System/Library/Extensions "$2"
-add_all_lilu_dependencies /Library/Extensions "$2"
-
+build_it "$2"
