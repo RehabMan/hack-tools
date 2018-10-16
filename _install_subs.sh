@@ -342,6 +342,19 @@ function rebuild_kernel_cache
     $SUDO touch $SLE && $SUDO kextcache -u /
 }
 
+function finish_kexts
+{
+    # rebuild cache before making LiluFriendLite
+    remove_kext LiluFriend.kext
+    rebuild_kernel_cache
+
+    # create LiluFriendLite and install
+    create_and_install_lilufriendlite
+
+    # all kexts are now installed, so rebuild cache again
+    rebuild_kernel_cache
+}
+
 function update_efi_kexts
 {
     # install/update kexts on EFI/Clover/kexts/Other
