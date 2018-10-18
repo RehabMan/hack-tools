@@ -15,7 +15,7 @@ fi
 
 # standard essential kexts
 # these kexts are only updated if installed
-ESSENTIAL="FakeSMC.kext RealtekRTL8111.kext IntelMausiEthernet.kext USBInjectAll.kext Lilu.kext WhateverGreen.kext AppleBacklightInjector.kext AppleBacklightFixup.kext IntelBacklight.kext VoodooPS2Controller.kext FakePCIID.kext FakePCIID_XHCIMux.kext XHCI-unsupported.kext SATA-unsupported.kext $ESSENTIAL"
+ESSENTIAL="FakeSMC.kext RealtekRTL8111.kext IntelMausiEthernet.kext USBInjectAll.kext Lilu.kext WhateverGreen.kext AppleBacklightInjector.kext AppleBacklightFixup.kext IntelBacklight.kext VoodooPS2Controller.kext FakePCIID.kext FakePCIID_AR9280_as_AR946x.kext FakePCIID_BCM57XX_as_BCM57765.kext FakePCIID_Broadcom_WiFi.kext FakePCIID_Intel_GbX.kext FakePCIID_Intel_HD_Graphics.kext FakePCIID_Intel_HDMI_Audio.kext Fake PCIID_XHCIMux.kext XHCI-unsupported.kext SATA-unsupported.kext $ESSENTIAL"
 
 TAGCMD="$(dirname ${BASH_SOURCE[0]})"/tag
 TAG=tag_file
