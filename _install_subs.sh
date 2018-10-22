@@ -344,12 +344,13 @@ function rebuild_kernel_cache
 
 function finish_kexts
 {
-    # rebuild cache before making LiluFriendLite
+    # rebuild cache before making LiluFriend
+    remove_kext LiluFriendLite.kext
     remove_kext LiluFriend.kext
     rebuild_kernel_cache
 
-    # create LiluFriendLite and install
-    create_and_install_lilufriendlite
+    # create LiluFriend (not currently using LiluFriendLite) and install
+    create_and_install_lilufriend
 
     # all kexts are now installed, so rebuild cache again
     rebuild_kernel_cache
