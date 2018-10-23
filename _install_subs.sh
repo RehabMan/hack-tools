@@ -17,6 +17,9 @@ fi
 # these kexts are only updated if installed
 ESSENTIAL="FakeSMC.kext RealtekRTL8111.kext IntelMausiEthernet.kext USBInjectAll.kext Lilu.kext WhateverGreen.kext AppleBacklightInjector.kext AppleBacklightFixup.kext IntelBacklight.kext VoodooPS2Controller.kext FakePCIID.kext FakePCIID_AR9280_as_AR946x.kext FakePCIID_BCM57XX_as_BCM57765.kext FakePCIID_Broadcom_WiFi.kext FakePCIID_Intel_GbX.kext FakePCIID_Intel_HD_Graphics.kext FakePCIID_Intel_HDMI_Audio.kext Fake PCIID_XHCIMux.kext XHCI-unsupported.kext SATA-unsupported.kext $ESSENTIAL"
 
+# kexts we used to use, but no longer use
+DEPRECATED="ACPIBacklight.kext FakePCIID_BCM94352Z_as_BCM94360CS2.kext FakePCIID_HD4600_HD4400.kext IntelGraphicsFixup.kext CoreDisplayFixup.kext FakePCIID_Intel_HD_Graphics.kext FakePCIID_Broadcom_WiFi.kext SATA-RAID-unsupported.kext SATA-100-series-unsupported.kext SATA-200-series-unsupported.kext SATA-300-series-unsupported.kext XHCI-9-series.kext XHCI-x99-injector.kext XHCI-100-series-injector.kext XHCI-200-series-injector.kext XHCI-300-series-injector.kext $DEPRECATED"
+
 TAGCMD="$(dirname ${BASH_SOURCE[0]})"/tag
 TAG=tag_file
 SLE=/System/Library/Extensions
@@ -219,30 +222,9 @@ function install_fakepciid_xhcimux
 
 function remove_deprecated_kexts
 {
-    # now using IntelBacklight.kext instead of ACPIBacklight.kext
-    remove_kext ACPIBacklight.kext
-    # deal with some renames
-    remove_kext FakePCIID_BCM94352Z_as_BCM94360CS2.kext
-    remove_kext FakePCIID_HD4600_HD4400.kext
-    # IntelGraphicsFixup.kext is no longer used (replaced by WhateverGreen.kext)
-    remove_kext IntelGraphicsFixup.kext
-    # CoreDisplayFixup uses WhateverGreen.kext (-cdfon)
-    remove_kext CoreDisplayFixup.kext
-    # FakePCIID_Intel_HD_Graphics.kext not needed either
-    remove_kext FakePCIID_Intel_HD_Graphics.kext
-    # using AirportBrcmFixup.kext instead of FakePCIID_Broadcom_WiFi.kext
-    remove_kext FakePCIID_Broadcom_WiFi.kext
-    # remove old SATA injectors
-    remove_kext SATA-RAID-unsupported.kext
-    remove_kext SATA-100-series-unsupported.kext
-    remove_kext SATA-200-series-unsupported.kext
-    remove_kext SATA-300-series-unsupported.kext
-    # remove old XHCI injectors
-    remove_kext XHCI-9-series.kext
-    remove_kext XHCI-x99-injector.kext
-    remove_kext XHCI-100-series-injector.kext
-    remove_kext XHCI-200-series-injector.kext
-    remove_kext XHCI-300-series-injector.kext
+    for kext in $DEPRECATED; do
+        remove_kext $kext
+    done
 }
 
 function install_backlight_kexts
@@ -368,9 +350,15 @@ function update_efi_kexts
         fi
     done
     # remove deprecated kexts from EFI that were typically ESSENTIAL
+    for kext in $DEPRECATED; do
+        if [[ ! -e $KEXTDEST/$kext && -e "$EFI"/EFI/CLOVER/kexts/Other/$kext ]]; then
+            echo removing "$EFI"/EFI/CLOVER/kexts/Other/$kext
+            rm -Rf "$EFI"/EFI/CLOVER/kexts/Other/$kext
+        fi
+    done
     # or kexts that aren't really deprecated, but if they are not in /L/E, remove from kexts/Other
     # (eg. the AppleBacklightFixup.kext vs. AppleBacklightInjector.kext case)
-    for kext in IntelGraphicsFixup.kext CoreDisplayFixup.kext FakePCIID_Intel_HD_Graphics.kext FakePCIID_Broadcom_WiFi.kext AppleBacklightFixup.kext AppleBacklightInjector.kext; do
+    for kext in AppleBacklightFixup.kext AppleBacklightInjector.kext; do
         if [[ ! -e $KEXTDEST/$kext && -e "$EFI"/EFI/CLOVER/kexts/Other/$kext ]]; then
             echo removing "$EFI"/EFI/CLOVER/kexts/Other/$kext
             rm -Rf "$EFI"/EFI/CLOVER/kexts/Other/$kext
